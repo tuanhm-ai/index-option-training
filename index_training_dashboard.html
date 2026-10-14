@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chương Trình Đào Tạo Chuyên Sâu: Quyền Chọn Chỉ Số (Index Options)</title>
+  <style>
+    :root {
+      --bg-dark: #0a0f1d;
+      --bg-card: #111827;
+      --bg-card-subtle: #1a2234;
+      --border-color: #243147;
+      --border-focus: #009fda;
+      --text-main: #f3f4f6;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --color-cyan: #009fda;
+      --color-cyan-glow: rgba(0, 159, 218, 0.2);
+      --color-lime: #c9dd03;
+      --color-lime-glow: rgba(201, 221, 3, 0.2);
+      --color-reflex: #002395;
+      --color-danger: #f43f5e;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 80px;
+    }
+
+    header.sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 15, 29, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-pill {
+      background: var(--color-cyan);
+      color: #031327;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    nav.nav-links {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      max-width: 100%;
+      padding-bottom: 4px;
+    }
+
+    nav.nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    nav.nav-links a:hover, nav.nav-links a.active {
+      color: #fff;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+    }
+
+    .reading-progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--color-cyan), var(--color-lime));
+      width: 0%;
+      z-index: 999;
+      transition: width 0.1s;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .tag-verified {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .tag-draft {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .tag-assumption {
+      background: rgba(0, 159, 218, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(0, 159, 218, 0.35);
+    }
+
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Grid system */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .sub-card {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    /* Inputs & Form Controls */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      background: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: #fff;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.9rem;
+      font-family: var(--font-mono);
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--color-cyan);
+      box-shadow: 0 0 0 2px var(--color-cyan-glow);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--color-cyan);
+      color: #04101e;
+    }
+
+    .btn-primary:hover {
+      background: #38bdf8;
+      box-shadow: 0 0 12px var(--color-cyan-glow);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card-subtle);
+      border-color: var(--border-color);
+      color: #fff;
+    }
+
+    .btn-secondary:hover {
+      background: #243147;
+    }
+
+    /* Tables */
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+      text-align: left;
+    }
+
+    table.data-table th {
+      background: #0d1422;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    table.data-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(36, 49, 71, 0.6);
+    }
+
+    table.data-table tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Stat Box */
+    .stat-box {
+      background: #090e18;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #fff;
+      margin: 0.2rem 0;
+    }
+
+    .stat-note {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    /* Callout & Warnings */
+    .callout {
+      border-left: 4px solid var(--color-cyan);
+      background: rgba(0, 159, 218, 0.08);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+
+    .callout-warning {
+      border-left-color: var(--color-warning);
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .callout-danger {
+      border-left-color: var(--color-danger);
+      background: rgba(244, 63, 94, 0.08);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Payoff Chart Canvas/SVG */
+    .chart-container {
+      background: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      position: relative;
+    }
+
+    /* Interactive Quiz */
+    .quiz-option {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--color-cyan);
+    }
+
+    .quiz-option.correct {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--color-success);
+      color: #34d399;
+    }
+
+    .quiz-option.wrong {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--color-danger);
+      color: #fb7185;
+    }
+
+    .badge-highlight {
+      color: var(--color-lime);
+      font-weight: 600;
+    }
+
+    /* Toggle switches */
+    .switch-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #243147;
+      transition: .3s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--color-cyan);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Tabs */
+    .tabs-header {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.6rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      color: var(--color-cyan);
+      border-bottom-color: var(--color-cyan);
+    }
+  </style>
+</head>
+<body>
+  <div class="reading-progress-bar" id="readingProgress"></div>
+
+  <header class="sticky-header">
+    <div class="brand-title">
+      <span>INDEX OPTIONS MASTERCLASS</span>
+      <span class="brand-pill">VSC / CCP</span>
+    </div>
+    <nav class="nav-links" id="mainNav">
+      <a href="#sec-overview" class="active">1. Tổng Quan</a>
+      <a href="#sec-market">2. Thị Trường & CCP</a>
+      <a href="#sec-payoff">3. Payoff & Lãi/Lỗ</a>
+      <a href="#sec-bsm">4. Định Giá BSM</a>
+      <a href="#sec-hedging">5. Delta Hedging</a>
+      <a href="#sec-margin">6. Quản Trị Ký Quỹ</a>
+      <a href="#sec-scenarios">7. Kịch Bản Mô Phỏng</a>
+      <a href="#sec-quiz">8. Kiểm Tra</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <!-- SYLLABUS HEADER -->
+    <div class="section-card" style="background: linear-gradient(135deg, #101728 0%, #0c1424 100%); border-color: #1e293b;">
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+        <div>
+          <span class="tag tag-verified" style="margin-bottom: 0.5rem;">Giáo Trình Đào Tạo Chuyên Sâu</span>
+          <h1 style="font-size: 1.85rem; font-weight: 800; color: #fff;">Quản Trị Rủi Ro & Bù Trừ Quyền Chọn Chỉ Số (Index Options)</h1>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.35rem;">
+            Khung Bù Trừ Đối Tác Trung Tâm (CCP) - Định Giá BSM & Thực Hành Tái Cân Bằng Delta Margin Call
+          </p>
+        </div>
+        <div style="text-align: right;">
+          <button class="btn btn-secondary" onclick="resetAllDefaults()">↺ Khôi phục tham số chuẩn</button>
+        </div>
+      </div>
+
+      <div class="grid-4" style="margin-top: 1rem;">
+        <div class="stat-box">
+          <div class="stat-label">Đối Tượng Học Viên</div>
+          <div style="font-weight: 600; color: #fff; font-size: 0.95rem; margin-top: 0.2rem;">Môi giới, Quản trị Rủi ro, Vận hành & MM</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Trình Độ Đầu Vào</div>
+          <div style="font-weight: 600; color: #fff; font-size: 0.95rem; margin-top: 0.2rem;">Cơ bản đến Trung cấp</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Thời Lượng Dự Kiến</div>
+          <div style="font-weight: 600; color: #fff; font-size: 0.95rem; margin-top: 0.2rem;">120 - 180 Phút (Kèm Lab tương tác)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Hệ Thống Trạng Thái Nguồn</div>
+          <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.35rem;">
+            <span class="tag tag-verified">Xác minh</span>
+            <span class="tag tag-draft">Dự thảo</span>
+            <span class="tag tag-assumption">Minh họa</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: TỔNG QUAN VỀ INDEX OPTIONS -->
+    <section id="sec-overview" class="section-card">
+      <div class="section-header">
+        <div>
+          <span class="tag tag-verified">Khung Pháp Lý: Luật CK 2019 / NĐ 158/2020</span>
+          <h2 class="section-title">1. Tổng Quan Về Hợp Đồng Quyền Chọn Chỉ Số (Index Options)</h2>
+          <div class="section-desc">Bản chất pháp lý, đặc tính quyền/nghĩa vụ bất đối xứng và so sánh với Hợp đồng tương lai (Futures).</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="sub-card">
+          <h3 style="color: var(--color-cyan); font-size: 1.05rem; margin-bottom: 0.75rem;">1.1 Quyền và Nghĩa Vụ Đơn Phương</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Hợp đồng quyền chọn là chứng khoán phái sinh xác nhận <strong>quyền (nhưng không phải nghĩa vụ)</strong> của bên mua, và <strong>nghĩa vụ bắt buộc</strong> của bên bán:
+          </p>
+          <ul style="padding-left: 1.25rem; font-size: 0.88rem; color: var(--text-main); line-height: 1.7;">
+            <li><strong>Quyền chọn Mua (Call Option):</strong> Bên mua trả phí để có quyền mua chỉ số tại mức giá thực hiện K; bên bán cam kết thanh toán chênh lệch nếu chỉ số tăng cao hơn K.</li>
+            <li><strong>Quyền chọn Bán (Put Option):</strong> Bên mua trả phí để có quyền bán chỉ số tại mức giá thực hiện K; bên bán cam kết thanh toán chênh lệch nếu chỉ số giảm thấp hơn K.</li>
+            <li><strong>Phí quyền chọn (Option Premium):</strong> Bên mua trả đứt ngay khi mở vị thế; bên bán nhận phí nhưng phải thế chấp tài sản ký quỹ để bảo đảm khả năng thanh toán.</li>
+          </ul>
+        </div>
+
+        <div class="sub-card">
+          <h3 style="color: var(--color-lime); font-size: 1.05rem; margin-bottom: 0.75rem;">1.2 Quy Cách Hợp Đồng Mẫu</h3>
+          <div class="table-responsive" style="margin-top: 0;">
+            <table class="data-table">
+              <tbody>
+                <tr>
+                  <td style="color: var(--text-muted);">Tài sản cơ sở</td>
+                  <td><strong>Chỉ số VN30</strong> <span class="tag tag-verified">Xác minh</span></td>
+                </tr>
+                <tr>
+                  <td style="color: var(--text-muted);">Kiểu thực hiện</td>
+                  <td><strong>Châu Âu (European Style)</strong> - Chỉ thực hiện tại ngày đáo hạn <span class="tag tag-verified">Xác minh</span></td>
+                </tr>
+                <tr>
+                  <td style="color: var(--text-muted);">Phương thức thanh toán</td>
+                  <td><strong>Bằng tiền (Cash Settlement)</strong> - Không chuyển giao cơ sở <span class="tag tag-verified">Xác minh</span></td>
+                </tr>
+                <tr>
+                  <td style="color: var(--text-muted);">Hệ số nhân hợp đồng</td>
+                  <td class="mono"><strong>100.000 VNĐ / điểm</strong> <span class="tag tag-assumption">Giả định quy cách</span></td>
+                </tr>
+                <tr>
+                  <td style="color: var(--text-muted);">Cơ chế thực hiện</td>
+                  <td>Thực hiện tự động (Automatic Exercise) nếu ITM <span class="tag tag-draft">Dự thảo TT 58 sửa đổi</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SO SÁNH FUTURES VS OPTIONS -->
+      <div style="margin-top: 1.5rem;">
+        <h3 style="font-size: 1rem; color: #fff; margin-bottom: 0.75rem;">1.3 Phân Biệt Hợp Đồng Tương Lai (Futures) vs. Hợp Đồng Quyền Chọn (Options)</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tiêu Chí Đối Chiếu</th>
+                <th>Hợp Đồng Tương Lai (Futures)</th>
+                <th>Hợp Đồng Quyền Chọn (Options)</th>
+                <th>Trạng Thái Căn Cứ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 600;">Tính chất nghĩa vụ</td>
+                <td>Đối xứng song phương (Cả 2 bên bắt buộc thực hiện)</td>
+                <td>Bất đối xứng đơn phương (Mua: Có quyền; Bán: Chịu nghĩa vụ)</td>
+                <td><span class="tag tag-verified">Luật CK 2019</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Dòng tiền ban đầu (T+0)</td>
+                <td>Không bên nào trả phí cho bên nào; cả hai ký quỹ ban đầu (IM)</td>
+                <td>Bên Mua trả 100% Phí (Premium); Bên Bán nhận phí và nộp Ký quỹ</td>
+                <td><span class="tag tag-verified">TT 58 / Dự thảo</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Định giá lại & Lãi/Lỗ hàng ngày</td>
+                <td>Thanh toán lãi/lỗ vị thế hàng ngày (Daily Mark-to-Market PnL)</td>
+                <td><strong>Không thanh toán PnL hàng ngày</strong>; chỉ điều chỉnh ký quỹ rủi ro cho Bên Bán</td>
+                <td><span class="tag tag-verified">Thông lệ VSC</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Rủi ro / Lợi nhuận</td>
+                <td>Tuyến tính 1:1 theo biến động giá cơ sở (Lợi nhuận/Rủi ro vô hạn)</td>
+                <td>Phi tuyến tính (Bên Mua lỗ tối đa bằng Phí; Bên Bán rủi ro mở rộng)</td>
+                <td><span class="tag tag-verified">Nguyên lý tài chính</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: THỊ TRƯỜNG & CƠ CHẾ BÙ TRỪ CCP -->
+    <section id="sec-market" class="section-card">
+      <div class="section-header">
+        <div>
+          <span class="tag tag-verified">Cơ Chế: VSC / VSDC / HNX / TVBT</span>
+          <h2 class="section-title">2. Cấu Trúc Thị Trường & Cơ Chế Bù Trừ Trung Tâm (CCP)</h2>
+          <div class="section-desc">Cơ chế Thế vị (Novation), dòng chảy vị thế và Trật tự xử lý vỡ nợ 4 cấp (Default Waterfall).</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="sub-card">
+          <h3 style="color: var(--color-cyan); font-size: 1.05rem; margin-bottom: 0.75rem;">2.1 Cơ Chế Thế Vị (Novation)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+            Ngay khi một giao dịch quyền chọn được khớp lệnh trên Sở GDCK (HNX), cơ chế <strong>Thế vị (Novation)</strong> lập tức có hiệu lực:
+          </p>
+          <div class="callout" style="margin: 0.75rem 0;">
+            <strong>VSC trở thành Bên Bán của mọi Bên Mua và Bên Mua của mọi Bên Bán.</strong>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+            Cơ chế này triệt tiêu hoàn toàn rủi ro đối tác trực tiếp giữa các nhà đầu tư. Thay vào đó, toàn bộ rủi ro vỡ nợ được quy tụ và kiểm soát tập trung tại Công ty Bù trừ Chứng khoán Việt Nam (VSC).
+          </p>
+        </div>
+
+        <div class="sub-card">
+          <h3 style="color: var(--color-lime); font-size: 1.05rem; margin-bottom: 0.75rem;">2.2 Vai Trò Các Chủ Thể Tham Gia</h3>
+          <ul style="padding-left: 1.25rem; font-size: 0.85rem; color: var(--text-main); line-height: 1.8;">
+            <li><strong>HNX / VNX:</strong> Tổ chức sàn giao dịch, niêm yết quy cách hợp đồng, khớp lệnh giao dịch.</li>
+            <li><strong>VSC (Tổ chức bù trừ CCP):</strong> Quản lý vị thế mở, định giá rủi ro Delta, thu nộp ký quỹ bù trừ và thực hiện thanh toán.</li>
+            <li><strong>Thành viên bù trừ (TVBT):</strong> CTCK đủ điều kiện vốn (Tự bù trừ &ge; 600 tỷ; Chung &ge; 800 tỷ), chịu trách nhiệm nghĩa vụ ký quỹ trực tiếp với VSC.</li>
+            <li><strong>Nhà tạo lập thị trường (Market Maker):</strong> Định chế cam kết chào giá 2 chiều (Bid/Ask), quản trị Delta danh mục qua hợp đồng tương lai.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- DEFAULT WATERFALL -->
+      <div style="margin-top: 1.5rem;" class="sub-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <h3 style="color: #fff; font-size: 1rem;">2.3 Thác Xử Lý Vỡ Nợ 4 Cấp (Default Waterfall) Của VSC</h3>
+          <span class="tag tag-verified">Quy định VSC / TT 58</span>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Khi một Thành viên bù trừ hoặc Nhà đầu tư mất khả năng thanh toán, VSC áp dụng tuần tự 4 nguồn bảo đảm tài chính để ngăn chặn rủi ro mang tính hệ thống:
+        </p>
+        <div class="grid-4">
+          <div style="background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 6px; padding: 0.85rem;">
+            <div style="font-size: 0.75rem; color: #fb7185; font-weight: 700;">CẤP 1 (Tài sản vỡ nợ)</div>
+            <div style="font-size: 0.85rem; margin-top: 0.35rem; font-weight: 600;">Tài sản Ký quỹ của chính TVBT/Khách hàng vi phạm</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">Tiền và chứng khoán ký quỹ của bên vỡ nợ bị tịch thu/thanh lý.</div>
+          </div>
+          <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; padding: 0.85rem;">
+            <div style="font-size: 0.75rem; color: #fbbf24; font-weight: 700;">CẤP 2 (Quỹ bù trừ vi phạm)</div>
+            <div style="font-size: 0.85rem; margin-top: 0.35rem; font-weight: 600;">Đóng góp Quỹ Bù trừ của chính TVBT vi phạm</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">Rút vốn từ phần đóng góp của TVBT đó tại Quỹ bù trừ VSC.</div>
+          </div>
+          <div style="background: rgba(0, 159, 218, 0.1); border: 1px solid rgba(0, 159, 218, 0.3); border-radius: 6px; padding: 0.85rem;">
+            <div style="font-size: 0.75rem; color: #38bdf8; font-weight: 700;">CẤP 3 (Tương trợ thị trường)</div>
+            <div style="font-size: 0.85rem; margin-top: 0.35rem; font-weight: 600;">Quỹ Bù trừ của CÁC TVBT khác trên thị trường</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">Phân bổ nghĩa vụ tổn thất theo tỷ lệ đóng góp của toàn bộ TVBT.</div>
+          </div>
+          <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; padding: 0.85rem;">
+            <div style="font-size: 0.75rem; color: #34d399; font-weight: 700;">CẤP 4 (Lá chắn cuối cùng)</div>
+            <div style="font-size: 0.85rem; margin-top: 0.35rem; font-weight: 600;">Nguồn vốn & Quỹ dự phòng rủi ro của VSC</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">Trích vốn chủ sở hữu và quỹ dự phòng nghiệp vụ của VSC bù đắp.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: PAYOFF & RỦI RO -->
+    <section id="sec-payoff" class="section-card">
+      <div class="section-header">
+        <div>
+          <span class="tag tag-verified">Nguyên Lý Tài Chính Định Lượng</span>
+          <h2 class="section-title">3. Hồ Sơ Lợi Nhuận / Rủi Ro & Đồ Thị Payoff Phi Tuyến Tính</h2>
+          <div class="section-desc">Mô phỏng đồ thị khi đáo hạn của 4 vị thế cơ bản (Long/Short Call & Put) và điểm hòa vốn Break-Even.</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Bảng điều khiển Payoff -->
+        <div class="sub-card">
+          <h3 style="color: #fff; font-size: 1rem; margin-bottom: 0.75rem;">Cấu Hình Đồ Thị Payoff</h3>
+          <div class="form-group">
+            <label class="form-label">Chọn Vị Thế Kiểm Tra</label>
+            <select class="form-select" id="payoffPosition" onchange="renderPayoffChart()">
+              <option value="long_call">1. Mua Quyền Chọn Mua (Long Call)</option>
+              <option value="short_call">2. Bán Quyền Chọn Mua (Short Call)</option>
+              <option value="long_put">3. Mua Quyền Chọn Bán (Long Put)</option>
+              <option value="short_put">4. Bán Quyền Chọn Bán (Short Put)</option>
+            </select>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Giá Thực Hiện K (Điểm)</label>
+              <input type="number" id="payoffK" class="form-input" value="1860" step="10" oninput="renderPayoffChart()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phí Quyền Chọn Premium (Điểm)</label>
+              <input type="number" id="payoffPremium" class="form-input" value="91.55" step="1" oninput="renderPayoffChart()">
+            </div>
+          </div>
+
+          <div class="stat-box" style="margin-top: 0.5rem;">
+            <div class="stat-label">Điểm Hòa Vốn (Break-Even)</div>
+            <div class="stat-value" id="payoffBreakEven" style="color: var(--color-lime);">1,951.55</div>
+            <div class="stat-note" id="payoffFormulaDesc">S_hòavốn = K + C</div>
+          </div>
+
+          <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;" id="payoffTextDetail">
+            <!-- Dynamic explanation -->
+          </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="chart-container">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">ĐỒ THỊ LÃI/LỖ KHI ĐÁO HẠN (PAYOFF DIAGRAM)</span>
+            <span class="tag tag-assumption">Trục: Điểm chỉ số</span>
+          </div>
+          <svg id="payoffSvg" viewBox="0 0 540 320" style="width: 100%; height: auto; display: block; overflow: visible;"></svg>
+        </div>
+      </div>
+
+      <!-- Lưu ý đáo hạn vs trước đáo hạn -->
+      <div class="callout callout-warning" style="margin-top: 1.25rem;">
+        <div class="callout-title">⚠️ Phân Biệt Payoff Khi Đáo Hạn vs. Giá Trị Vị Thế Trước Đáo Hạn</div>
+        <p style="font-size: 0.88rem; color: var(--text-main);">
+          Đồ thị gập gãy trên <strong>chỉ phản ánh lãi/lỗ tại đúng thời điểm đáo hạn (T=0)</strong>. Trước khi đáo hạn (T &gt; 0), giá trị quyền chọn chịu tác động đồng thời của Giá trị thời gian (Time Value), Biến động ngầm định (&sigma;) và Lãi suất (r). Khi đó đường cong PnL là một hàm trơn liên tục theo mô hình BSM chứ không gập góc sắc nhọn.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 4: ĐỊNH GIÁ BSM & DELTA -->
+    <section id="sec-bsm" class="section-card">
+      <div class="section-header">
+        <div>
+          <span class="tag tag-verified">Mô Hình Toán Học BSM (1973)</span>
+          <h2 class="section-title">4. Định Giá Black-Scholes-Merton (BSM) & Phân Tích Hệ Số Delta</h2>
+          <div class="section-desc">Bộ máy tính toán lý thuyết có điều chỉnh cổ tức liên tục (q) và quy đổi giá trị tiền theo hợp đồng.</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Tham số đầu vào -->
+        <div class="sub-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <h3 style="color: var(--color-cyan); font-size: 1rem;">4.1 Tham Số Đầu Vào Mô Hình</h3>
+            <span class="tag tag-assumption">Dữ liệu giả định minh họa</span>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Chỉ Số Cơ Sở S₀ (Điểm)</label>
+              <input type="number" id="bsmS0" class="form-input" value="1860" step="1" oninput="calculateBSM()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Giá Thực Hiện K (Điểm)</label>
+              <input type="number" id="bsmK" class="form-input" value="1860" step="1" oninput="calculateBSM()">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Lãi Suất Phi Rủi Ro r (%/năm)</label>
+              <input type="number" id="bsmR" class="form-input" value="7.9" step="0.1" oninput="calculateBSM()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tỷ Suất Cổ Tức q (%/năm)</label>
+              <input type="number" id="bsmQ" class="form-input" value="0.0" step="0.1" oninput="calculateBSM()">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Biến Động Giá σ (%/năm)</label>
+              <input type="number" id="bsmSigma" class="form-input" value="19.58" step="0.1" oninput="calculateBSM()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Thời Gian Còn Lại T (Năm)</label>
+              <input type="number" id="bsmT" class="form-input" value="0.25" step="0.01" oninput="calculateBSM()">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Hệ Số Nhân Hợp Đồng (VNĐ/điểm)</label>
+            <input type="number" id="bsmMultiplier" class="form-input" value="100000" step="10000" oninput="calculateBSM()">
+            <span style="font-size: 0.72rem; color: var(--text-dim);">* Giả định cần kiểm tra lại theo Quy chế HNX khi ban hành chính thức</span>
+          </div>
+
+          <div id="bsmError" style="display: none;" class="callout callout-danger">
+            <div class="callout-title">Lỗi dữ liệu đầu vào</div>
+            <div id="bsmErrorMsg" style="font-size: 0.85rem;"></div>
+          </div>
+        </div>
+
+        <!-- Các bước tính toán trung gian & Kết quả -->
+        <div class="sub-card">
+          <h3 style="color: #fff; font-size: 1rem; margin-bottom: 0.75rem;">4.2 Các Bước Tính Toán Trung Gian</h3>
+          
+          <div class="grid-2" style="margin-bottom: 1rem;">
+            <div class="stat-box">
+              <div class="stat-label">Tham Số d₁</div>
+              <div class="stat-value mono" id="outD1" style="font-size: 1.15rem; color: var(--color-cyan);">0.2507</div>
+              <div class="stat-note">[ln(S/K) + (r - q + σ²/2)T] / [σ√T]</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Tham Số d₂</div>
+              <div class="stat-value mono" id="outD2" style="font-size: 1.15rem; color: var(--color-cyan);">0.1528</div>
+              <div class="stat-note">d₁ - σ√T</div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-bottom: 1rem;">
+            <div class="stat-box">
+              <div class="stat-label">Xác Suất N(d₁)</div>
+              <div class="stat-value mono" id="outNd1" style="font-size: 1.15rem;">0.5990</div>
+              <div class="stat-note">Chuẩn tích lũy N(d1)</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Xác Suất N(d₂)</div>
+              <div class="stat-value mono" id="outNd2" style="font-size: 1.15rem;">0.5607</div>
+              <div class="stat-note">Chuẩn tích lũy N(d2)</div>
+            </div>
+          </div>
+
+          <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem;">Giá Lý Thuyết & Delta Tương Đương</h4>
+          <div class="table-responsive" style="margin-top: 0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Chỉ Tiêu</th>
+                  <th>Giá Điểm</th>
+                  <th>Giá Tiền (VNĐ/HĐ)</th>
+                  <th>Delta (Δ)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color: var(--color-cyan);">Call Option</strong></td>
+                  <td class="mono" id="outCallPoints">91.55</td>
+                  <td class="mono" id="outCallCash" style="color: var(--color-lime); font-weight: 700;">9.155.000</td>
+                  <td class="mono" id="outDeltaCall" style="color: #38bdf8; font-weight: 700;">+0.5990</td>
+                </tr>
+                <tr>
+                  <td><strong style="color: #fb7185;">Put Option</strong></td>
+                  <td class="mono" id="outPutPoints">55.18</td>
+                  <td class="mono" id="outPutCash" style="color: #fb7185; font-weight: 700;">5.518.000</td>
+                  <td class="mono" id="outDeltaPut" style="color: #fb7185; font-weight: 700;">-0.4010</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Giới hạn của BSM -->
+      <div class="callout callout-warning" style="margin-top: 1.25rem;">
+        <div class="callout-title">⚠️ Giới Hạn Của Mô Hình BSM & Cảnh Báo Rủi Ro Thị Trường</div>
+        <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6;">
+          Mô hình BSM giả định độ biến động (&sigma;) không đổi và lãi suất (r) cố định, tuân theo phân phối chuẩn logarit không có hiện tượng "đuôi béo" (Fat-tails). Trên thị trường thực tế xuất hiện hiện tượng <strong>đường cong nụ cười biến động (Volatility Smile / Skew)</strong>. Giá BSM là mức giá tham chiếu lý thuyết dùng trong đào tạo và kiểm thử hệ thống rủi ro, không phải là báo giá cam kết giao dịch thực tế trên sàn HNX.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 5: DELTA HEDGING -->
+    <section id="sec-hedging" class="section-card">
+      <div class="section-header">
+        <div>
+          <span class="tag tag-verified">Nghiệp Vụ Tạo Lập Thị Trường (Market Making)</span>
+          <h2 class="section-title">5. Quản Trị Rủi Ro Hướng: Chiến Lược Delta Hedging Bằng Futures</h2>
+          <div class="section-desc">Cơ chế trung hòa rủi ro thị trường cho danh mục Short Quyền chọn thông qua Hợp đồng Tương lai VN30.</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="sub-card">
+          <h3 style="color: #fff; font-size: 1rem; margin-bottom: 0.75rem;">5.1 Nguyên Lý Trung Hòa Delta (Delta-Neutral)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 0.75rem;">
+            Delta đo lường mức thay đổi của giá quyền chọn khi chỉ số cơ sở thay đổi 1 điểm. Do Hợp đồng Tương lai (Futures) có hệ số Delta tuyến tính bằng <strong>+1.0</strong> cho vị thế Mua (Long) và <strong>-1.0</strong> cho vị thế Bán (Short), Nhà tạo lập thị trường có thể dùng Futures để triệt tiêu độ nhạy cảm của danh mục Options.
+          </p>
+          <div class="stat-box" style="margin-bottom: 0.75rem;">
+            <div class="stat-label">Công thức Delta danh mục</div>
+            <div style="font-size: 1.05rem; font-weight: 700; color: #fff; font-family: var(--font-mono); margin: 0.25rem 0;">
+              Δ_Portfolio = Số HĐQC × (-1 với Short) × Δ_HĐ
+            </div>
+            <div class="stat-note">Số HĐTL VN30 cần Hedging = - Δ_Portfolio</div>
+          </div>
+        </div>
+
+        <!-- Máy tính tương tác Hedging -->
+        <div class="sub-card">
+          <h3 style="color: var(--color-lime); font-size: 1rem; margin-bottom: 0.75rem;">5.2 Tương Tác Tính Toán Hedging</h3>
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Vị Thế Quyền Chọn</label>
+              <select id="hedgeOptionType" class="form-select" onchange="calculateHedging()">
+                <option value="short_call">Short Call (Bán Call)</option>
+                <option value="long_call">Long Call (Mua Call)</option>
+                <option value="short_put">Short Put (Bán Put)</option>
+                <option value="long_put">Long Put (Mua Put)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Số Lượng Hợp Đồng</label>
+              <input type="number" id="hedgeQuantity" class="form-input" value="10" min="1" step="1" oninput="calculateHedging()">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Delta Mỗi Hợp Đồng (Nhập tay hoặc dùng BSM)</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="number" id="hedgeDeltaInput" class="form-input" value="0.60" step="0.01" oninput="calculateHedging()">
+              <button class="btn btn-secondary" style="white-space: nowrap; font-size: 0.75rem;" onclick="syncDeltaFromBSM()">Đồng bộ BSM</button>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top: 1rem;">
+            <div class="stat-box">
+              <div class="stat-label">Delta Tổng Danh Mục</div>
+              <div class="stat-value mono" id="outHedgePortfolioDelta" style="color: var(--color-danger); font-size: 1.25rem;">-6.00</div>
+              <div class="stat-note">Tương đương HĐTL</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Hành Động Phòng Vệ Cần Thiết</div>
+              <div class="stat-value mono" id="outHedgeAction" style="color: var(--color-success); font-size: 1.1rem;">LONG 6 HĐTL</div>
+              <div class="stat-note">VN30 Futures (+1.0 Δ)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top: 1.25rem;">
+        <div class="callout-title">⚠️ Cảnh Báo: Delta-Neutral Không Phải Là Miễn Nhiễm Mọi Rủi Ro!</div>
+        <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6;">
+          Trạng thái Delta-neutral chỉ triệt tiêu rủi ro hướng tại một thời điểm tức thời cho các biến động vô cùng nhỏ. Market Maker vẫn đối mặt với:
+          <strong>(1) Gamma Risk:</strong> Delta thay đổi liên tục khi chỉ số dao động mạnh;
+          <strong>(2) Vega Risk:</strong> Rủi ro biến động ngầm định (&sigma;) gia tăng đột biến;
+          <strong>(3) Basis Risk:</strong> Chênh lệch giá giữa HĐTL và Chỉ số VN30 cơ sở;
+          <strong>(4) Chi phí trượt giá & thanh khoản</strong> khi tái cân bằng tần suất cao.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 6: KÝ QUỸ & CHU KỲ VẬN HÀNH -->
+    <section id="sec-margin" class="section-card">
+      <div class="section-header">
+        <div>
+          <span class="tag tag-draft">Quy Định CCP: Thông tư 58 & Dự thảo sửa đổi</span>
+          <h2 class="section-title">6. Cơ Chế Quản Trị Ký Quỹ & Chu Kỳ Vận Hành Hàng Ngày</h2>
+          <div class="section-desc">Phân tách Value Margin (VM), Risk Margin (RM), tỷ lệ tiền 80% và chu kỳ xử lý thiếu hụt ký quỹ.</div>
+        </div>
+      </div>
+
+      <!-- Cấu trúc 2 hợp phần ký quỹ -->
+      <div class="grid-3" style="margin-bottom: 1.5rem;">
+        <div class="sub-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h3 style="color: var(--color-cyan); font-size: 0.95rem;">1. Value Margin (VM)</h3>
+            <span class="tag tag-verified">Xác minh</span>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+            <strong>Ký quỹ Giá trị Hiện tại:</strong> Đo lường bằng toàn bộ giá trị thị trường của vị thế Short Option theo giá đóng cửa/MTM.
+          </p>
+          <div class="callout" style="padding: 0.5rem 0.75rem; margin: 0.5rem 0; font-size: 0.78rem;">
+            Đảm bảo bên bán luôn có đủ tiền mua lại vị thế đóng trên sàn.
+          </div>
+        </div>
+
+        <div class="sub-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h3 style="color: var(--color-lime); font-size: 0.95rem;">2. Risk Margin (RM)</h3>
+            <span class="tag tag-draft">Dự thảo VSC</span>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+            <strong>Ký quỹ Rủi ro:</strong> Quy đổi vị thế Quyền chọn phi tuyến sang vị thế HĐTL tương đương qua hệ số Delta nhân với tỷ lệ ký quỹ IM.
+          </p>
+          <div class="callout" style="padding: 0.5rem 0.75rem; margin: 0.5rem 0; font-size: 0.78rem;">
+            Bảo đảm chống chịu mức thua lỗ tiềm tàng trong phiên biến động mạnh.
+          </div>
+        </div>
+
+        <div class="sub-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h3 style="color: #fbbf24; font-size: 0.95rem;">3. Tỷ Lệ Tiền Mặt & Haircut</h3>
+            <span class="tag tag-verified">Quy định VSC</span>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+            Tỷ lệ ký quỹ bằng tiền nộp về VSC <strong>không thấp hơn 80%</strong>. Chứng khoán ký quỹ phải nằm trong danh mục và áp dụng tỷ lệ chiết khấu (Haircut).
+          </p>
+          <div class="callout callout-warning" style="padding: 0.5rem 0.75rem; margin: 0.5rem 0; font-size: 0.78rem;">
+            Tách biệt tuyệt đối tài sản khách hàng và TVBT.
+          </div>
+        </div>
+      </div>
+
+      <!-- CHU KỲ 4 BƯỚC -->
+      <div class="sub-card">
+        <h3 style="color: #fff; font-size: 1rem; margin-bottom: 1rem;">Trình Tự Chu Kỳ Vận Hành Ký Quỹ Hàng Ngày (Daily Margin Cycle)</h3>
+        <div class="grid-4">
+          <div style="background: #090e18; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.85rem;">
+            <div style="font-size: 0.75rem; color: var(--color-cyan); font-weight: 700;">BƯỚC 1</div>
+            <div style="font-size: 0.9rem; font-weight: 600; margin-top: 0.25rem;">Định Giá Lại Tài Sản</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem;">
+              Cuối ngày & định kỳ trong phiên, VSC và TVBT tái định giá hợp đồng, cập nhật Delta và tính Tổng Ký Quỹ Yêu Cầu = VM + RM.
+            </p>
+          </div>
+          <div style="background: #090e18; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.85rem;">
+            <div style="font-size: 0.75rem; color: var(--color-warning); font-weight: 700;">BƯỚC 2</div>
+            <div style="font-size: 0.9rem; font-weight: 600; margin-top: 0.25rem;">Kiểm Tra & Margin Call</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem;">
+              Nếu tài sản thực tế &lt; Mức yêu cầu (hoặc tiền mặt &lt; 80%), hệ thống kích hoạt lệnh Gọi bổ sung ký quỹ (Margin Call).
+            </p>
+          </div>
+          <div style="background: #090e18; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.85rem;">
+            <div style="font-size: 0.75rem; color: var(--color-danger); font-weight: 700;">BƯỚC 3</div>
+            <div style="font-size: 0.9rem; font-weight: 600; margin-top: 0.25rem;">Xử Lý Cưỡng Chế (Force Close)</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem;">
+              Nếu quá hạn không nộp đủ, TVBT đình chỉ nhận lệnh, thanh lý vị thế bắt buộc và xử lý tài sản ký quỹ để trả nợ.
+            </p>
+          </div>
+          <div style="background: #090e18; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.85rem;">
+            <div style="font-size: 0.75rem; color: var(--color-success); font-weight: 700;">BƯỚC 4</div>
+            <div style="font-size: 0.9rem; font-weight: 600; margin-top: 0.25rem;">Giải Tỏa Ký Quỹ (Release)</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem;">
+              Khi thị trường biến động có lợi làm VM và RM giảm, nhà đầu tư có quyền rút bớt phần tài sản ký quỹ dư thừa.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bảng đối chiếu quy định vs chưa xác minh -->
+      <div style="margin-top: 1.5rem;">
+        <h3 style="font-size: 0.95rem; color: #fff; margin-bottom: 0.5rem;">Lưu Ý Nghiệp Vụ Về Bù Trừ Netting & Yêu Cầu Ký Quỹ</h3>
+        <div class="callout callout-warning">
+          <ul style="padding-left: 1rem; font-size: 0.85rem; color: var(--text-main); line-height: 1.6;">
+            <li><strong>Không tự động mặc định bù trừ lãi Futures:</strong> Khoản lãi từ hợp đồng tương lai chỉ được bù trừ tự động cho ký quỹ quyền chọn khi quy chế kỹ thuật thanh toán của VSC đã kích hoạt cơ chế Netting tài khoản liên sản phẩm.</li>
+            <li><strong>Ký quỹ Khách hàng vs TVBT:</strong> CTCK có quyền đặt tỷ lệ ký quỹ đối với khách hàng <em>cao hơn</em> tỷ lệ mà VSC yêu cầu đối với TVBT nhằm phòng ngừa rủi ro chậm nộp.</li>
+            <li><strong>Mức tiết kiệm ký quỹ danh mục (Portfolio Margining):</strong> Các con số tiết kiệm 70-80% vốn là ước tính lý thuyết của Market Maker, chưa phải là cam kết tỷ lệ chính thức của VSC.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: KỊCH BẢN MÔ PHỎNG -->
+    <section id="sec-scenarios" class="section-card">
+      <div class="section-header">
+        <div>
+          <span class="tag tag-assumption">Phòng Thí Nghiệm Kịch Bản Thực Hành</span>
+          <h2 class="section-title">7. Mô Phỏng Kịch Bản Ký Quỹ & Xử Lý Margin Call / Release</h2>
+          <div class="section-desc">Mô phỏng vị thế Short 10 Hợp đồng Call ATM khi Chỉ số VN30 biến động Kịch bản Cơ sở (1.860), Tăng (+60 điểm) và Giảm (-60 điểm).</div>
+        </div>
+      </div>
+
+      <!-- Thông số kịch bản có thể tùy biến -->
+      <div class="sub-card" style="margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+          <h3 style="color: #fff; font-size: 1rem;">7.1 Thiết Lập Thông Số Mô Phỏng</h3>
+          <div class="switch-container">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Bật Netting Lãi Futures Vào Margin (Mặc định: TẮT)</span>
+            <label class="switch">
+              <input type="checkbox" id="toggleNetting" onchange="runSimulation()">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid-4">
+          <div class="form-group">
+            <label class="form-label">Số HĐ Short Call</label>
+            <input type="number" id="simContracts" class="form-input" value="10" min="1" oninput="runSimulation()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tài Sản Ký Quỹ Hiện Có (VNĐ)</label>
+            <input type="number" id="simCollateral" class="form-input" value="300000000" step="10000000" oninput="runSimulation()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tỷ Lệ Ký Quỹ HĐTL (%)</label>
+            <input type="number" id="simFuturesMarginRate" class="form-input" value="17" step="0.5" oninput="runSimulation()">
+            <span style="font-size: 0.7rem; color: var(--text-dim);">* Tham số minh họa VSC</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bước Nhảy Biến Động (Điểm)</label>
+            <input type="number" id="simStep" class="form-input" value="60" step="5" oninput="runSimulation()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Bảng kịch bản 3 cột so sánh -->
+      <div class="table-responsive">
+        <table class="data-table" id="scenarioTable">
+          <thead>
+            <tr>
+              <th>Hạng Mục Chỉ Tiêu</th>
+              <th style="color: #fb7185;">Kịch Bản Giảm (-60đ)<br><span id="headerDown" style="font-size: 0.8rem; font-weight: normal;">VN30 = 1.800</span></th>
+              <th style="color: var(--color-cyan);">Kịch Bản Cơ Sở (ATM)<br><span id="headerBase" style="font-size: 0.8rem; font-weight: normal;">VN30 = 1.860</span></th>
+              <th style="color: var(--color-lime);">Kịch Bản Tăng (+60đ)<br><span id="headerUp" style="font-size: 0.8rem; font-weight: normal;">VN30 = 1.920</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Điểm chỉ số VN30 (S)</strong></td>
+              <td class="mono" id="scSDown">1.800</td>
+              <td class="mono" id="scSBase">1.860</td>
+              <td class="mono" id="scSUp">1.920</td>
+            </tr>
+            <tr>
+              <td><strong>Delta mỗi hợp đồng Call (Δ)</strong></td>
+              <td class="mono" id="scDeltaDown">0.40</td>
+              <td class="mono" id="scDeltaBase">0.60</td>
+              <td class="mono" id="scDeltaUp">0.78</td>
+            </tr>
+            <tr>
+              <td><strong>Giá lý thuyết Call (Điểm)</strong></td>
+              <td class="mono" id="scCallPtsDown">58.20</td>
+              <td class="mono" id="scCallPtsBase">91.55</td>
+              <td class="mono" id="scCallPtsUp">134.80</td>
+            </tr>
+            <tr>
+              <td><strong>Ký quỹ Giá trị VM (10 HĐ)</strong></td>
+              <td class="mono" id="scVMDown">58.200.000 VNĐ</td>
+              <td class="mono" id="scVMBase">91.550.000 VNĐ</td>
+              <td class="mono" id="scVMUp">134.800.000 VNĐ</td>
+            </tr>
+            <tr>
+              <td><strong>Ký quỹ Rủi ro RM (Minh họa Delta)</strong></td>
+              <td class="mono" id="scRMDown">122.400.000 VNĐ</td>
+              <td class="mono" id="scRMBase">189.720.000 VNĐ</td>
+              <td class="mono" id="scRMUp">254.592.000 VNĐ</td>
+            </tr>
+            <tr style="background: rgba(255,255,255,0.03);">
+              <td><strong>TỔNG KÝ QUỸ YÊU CẦU (VM + RM)</strong></td>
+              <td class="mono" id="scTotalDown" style="font-weight: 700; color: #34d399;">180.600.000 VNĐ</td>
+              <td class="mono" id="scTotalBase" style="font-weight: 700; color: #38bdf8;">281.270.000 VNĐ</td>
+              <td class="mono" id="scTotalUp" style="font-weight: 700; color: #fb7185;">389.392.000 VNĐ</td>
+            </tr>
+            <tr>
+              <td><strong>Tài sản ký quỹ hiện có</strong></td>
+              <td class="mono" id="scCollateralDown">300.000.000 VNĐ</td>
+              <td class="mono" id="scCollateralBase">300.000.000 VNĐ</td>
+              <td class="mono" id="scCollateralUp">300.000.000 VNĐ</td>
+            </tr>
+            <tr style="font-weight: 700;">
+              <td><strong>Trạng Thái Tài Khoản (Dư / Thiếu)</strong></td>
+              <td class="mono" id="scStatusDown" style="color: #34d399;">+119.400.000 (Dư)</td>
+              <td class="mono" id="scStatusBase" style="color: #38bdf8;">+18.730.000 (Dư)</td>
+              <td class="mono" id="scStatusUp" style="color: #fb7185;">-89.392.000 (THIẾU)</td>
+            </tr>
+            <tr>
+              <td><strong>Hành Động Nghiệp Vụ Ký Quỹ</strong></td>
+              <td><span class="tag tag-verified" id="scActionDown">Margin Release</span></td>
+              <td><span class="tag tag-verified" id="scActionBase">An toàn</span></td>
+              <td><span class="tag tag-draft" id="scActionUp">MARGIN CALL</span></td>
+            </tr>
+            <tr>
+              <td><strong>Tái Cân Bằng Delta Hedging (Futures)</strong></td>
+              <td class="mono" id="scHedgeDown">Bán bớt 2 HĐTL Long</td>
+              <td class="mono" id="scHedgeBase">Duy trì Long 6 HĐTL</td>
+              <td class="mono" id="scHedgeUp">Mua thêm 2 HĐTL Long</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout" style="margin-top: 1.5rem;">
+        <div class="callout-title">Ghi Chú Phân Biệt Thực Tế Vận Hành vs Giả Định Đào Tạo</div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+          Công thức RM minh họa trên tính bằng: <code class="mono" style="color: var(--color-lime);">RM = (Số HĐ × Δ) × (S × 100.000 × Tỷ lệ IM Futures)</code>. Đây là mô hình giảng dạy chuẩn hóa. Khi VSC ban hành quy chế kỹ thuật, RM có thể được tính theo phương pháp kịch bản ma trận SPAN hoặc giả lập VaR tổng hợp. Mọi quyết định Margin Call trong bảng là hệ quả của dữ liệu giả lập, không đại diện cho quyết định pháp lý thực tế của VSC.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 8: CÂU HỎI KIỂM TRA NHANH -->
+    <section id="sec-quiz" class="section-card">
+      <div class="section-header">
+        <div>
+          <span class="tag tag-verified">Đánh Giá Năng Lực Học Viên</span>
+          <h2 class="section-title">8. Bài Kiểm Tra Kiến Thức Trắc Nghiệm</h2>
+          <div class="section-desc">Củng cố các khái niệm pháp lý, định giá BSM, Delta hedging và quy trình xử lý ký quỹ.</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Câu 1 -->
+        <div class="sub-card">
+          <div style="font-weight: 700; color: #fff; margin-bottom: 0.5rem;">Câu 1: Điểm khác biệt cơ bản về nghĩa vụ ký quỹ giữa Bên Mua và Bên Bán Quyền chọn là gì?</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false, 'Sai. Bên mua chỉ nộp 100% phí quyền chọn ban đầu, không chịu ký quỹ rủi ro hàng ngày.')">
+            A. Cả hai bên đều phải duy trì ký quỹ ban đầu và ký quỹ biến đổi hàng ngày như HĐTL.
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(this, true, 'Chính xác! Bên Mua chỉ trả hết phí Premium (T+0). Bên Bán gánh nghĩa vụ thực hiện nên phải ký quỹ VM + RM.')">
+            B. Bên Mua chỉ trả 100% phí quyền chọn ban đầu; Bên Bán bắt buộc nộp và duy trì ký quỹ rủi ro hàng ngày.
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(this, false, 'Sai. Bên bán nhận phí quyền chọn chứ không trả phí.')">
+            C. Bên Bán phải trả 100% phí quyền chọn và nộp ký quỹ.
+          </div>
+          <div class="quiz-feedback" style="display: none; font-size: 0.85rem; margin-top: 0.5rem; padding: 0.5rem; border-radius: 4px;"></div>
+        </div>
+
+        <!-- Câu 2 -->
+        <div class="sub-card">
+          <div style="font-weight: 700; color: #fff; margin-bottom: 0.5rem;">Câu 2: Khi Market Maker đang nắm vị thế Short 10 Call ATM với Delta Call = +0.60, để đạt trạng thái Delta-Neutral họ cần:</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false, 'Sai. Vị thế Short Call có Delta mang dấu âm (-6.0), do đó phải Mua Futures để bù đắp.')">
+            A. Bán (Short) 6 Hợp đồng Tương lai VN30.
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(this, true, 'Chính xác! Delta vị thế = 10 * (-1) * (+0.60) = -6.0. Cần MUA (Long) +6 HĐTL (Delta = +1.0) để trung hòa.')">
+            B. Mua (Long) 6 Hợp đồng Tương lai VN30.
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(this, false, 'Sai. Số lượng cần Hedging là 6 HĐTL chứ không phải 10 HĐTL.')">
+            C. Mua (Long) 10 Hợp đồng Tương lai VN30.
+          </div>
+          <div class="quiz-feedback" style="display: none; font-size: 0.85rem; margin-top: 0.5rem; padding: 0.5rem; border-radius: 4px;"></div>
+        </div>
+
+        <!-- Câu 3 -->
+        <div class="sub-card">
+          <div style="font-weight: 700; color: #fff; margin-bottom: 0.5rem;">Câu 3: Trong Thác xử lý vỡ nợ (Default Waterfall) của VSC, nguồn tài chính nào được sử dụng đầu tiên (Cấp 1)?</div>
+          <div class="quiz-option" onclick="checkQuiz(this, true, 'Chính xác! Tài sản ký quỹ của chính TVBT hoặc khách hàng vi phạm luôn được ưu tiên khấu trừ đầu tiên.')">
+            A. Tài sản ký quỹ (tiền, chứng khoán) của chính TVBT/Khách hàng vi phạm nghĩa vụ.
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(this, false, 'Sai. Đóng góp của các TVBT khác chỉ dùng ở Cấp 3.')">
+            B. Quỹ Bù trừ của tất cả các TVBT khác trên thị trường.
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(this, false, 'Sai. Vốn chủ sở hữu của VSC là lá chắn cuối cùng ở Cấp 4.')">
+            C. Nguồn vốn chủ sở hữu và quỹ dự phòng rủi ro của VSC.
+          </div>
+          <div class="quiz-feedback" style="display: none; font-size: 0.85rem; margin-top: 0.5rem; padding: 0.5rem; border-radius: 4px;"></div>
+        </div>
+
+        <!-- Câu 4 -->
+        <div class="sub-card">
+          <div style="font-weight: 700; color: #fff; margin-bottom: 0.5rem;">Câu 4: Khi chỉ số VN30 tăng mạnh, điều gì xảy ra với tài khoản của nhà đầu tư nắm vị thế Short Call?</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false, 'Sai. Khi chỉ số tăng, giá Call tăng làm Value Margin tăng và Delta tăng, đẩy rủi ro lên cao.')">
+            A. Yêu cầu ký quỹ giảm xuống và được giải tỏa ký quỹ (Margin Release).
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(this, true, 'Chính xác! Cả Value Margin (giá Call tăng) và Risk Margin (Delta tăng) đều tăng mạnh, dẫn tới phát lệnh Margin Call.')">
+            B. Cả Value Margin và Risk Margin đều tăng, tài khoản dễ bị rơi vào trạng thái Margin Call thiếu hụt.
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(this, false, 'Sai. Vị thế Short Call chịu lỗ không giới hạn khi thị trường tăng.')">
+            C. Nhà đầu tư nhận thêm tiền lãi thanh toán MTM hàng ngày.
+          </div>
+          <div class="quiz-feedback" style="display: none; font-size: 0.85rem; margin-top: 0.5rem; padding: 0.5rem; border-radius: 4px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER / VĂN BẢN THAM KHẢO & CĂN CỨ PHÁP LÝ -->
+    <footer style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-card); border-top: 1px solid var(--border-color); border-radius: 8px;">
+      <h3 style="font-size: 0.95rem; color: #fff; margin-bottom: 0.75rem;">Danh Mục Căn Cứ Pháp Lý & Nguồn Dữ Liệu Tham Chiếu</h3>
+      <div class="grid-2" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">
+        <div>
+          <p><strong style="color: #fff;">1. Luật Chứng khoán số 54/2019/QH14 & Luật số 56/2024/QH15:</strong> Quy định địa vị pháp lý phái sinh, quyền chọn và chế tài thị trường. (Hiệu lực: Đang có hiệu lực).</p>
+          <p style="margin-top: 0.35rem;"><strong style="color: #fff;">2. Nghị định số 158/2020/NĐ-CP:</strong> Quy định chi tiết về chứng khoán phái sinh và thị trường chứng khoán phái sinh. (Hiệu lực: Đang có hiệu lực).</p>
+          <p style="margin-top: 0.35rem;"><strong style="color: #fff;">3. Thông tư số 14/2025/TT-BTC:</strong> Đăng ký, lưu ký, bù trừ và thanh toán chứng khoán; chuẩn hóa hợp đồng mở tài khoản và mã định danh. (Hiệu lực: Đang có hiệu lực).</p>
+        </div>
+        <div>
+          <p><strong style="color: #fff;">4. Thông tư số 58/2021/TT-BTC & Dự thảo Thông tư sửa đổi:</strong> Quy định giao dịch phái sinh và cơ chế bù trừ qua VSC, ký quỹ Delta. (Trạng thái: <span class="tag tag-draft">Dự thảo sửa đổi đang lấy ý kiến</span>).</p>
+          <p style="margin-top: 0.35rem;"><strong style="color: #fff;">5. Mô hình BSM:</strong> Black, F. and Scholes, M. (1973), Merton, R. C. (1973) - Công thức định giá quyền chọn tài sản cổ tức liên tục.</p>
+          <p style="margin-top: 0.35rem;"><strong style="color: #fff;">Ngày cập nhật dữ liệu:</strong> 13/10/2026. Mọi số liệu mô phỏng trong bảng chỉ nhằm mục đích minh họa đào tạo.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Standard Normal Cumulative Distribution Function N(x) using Hart's / erf approximation
+    function normalCDF(x) {
+      const a1 =  0.254829592;
+      const a2 = -0.284496736;
+      const a3 =  1.421413741;
+      const a4 = -1.453152027;
+      const a5 =  1.061405429;
+      const p  =  0.3275911;
+
+      const sign = x < 0 ? -1 : 1;
+      const absX = Math.abs(x) / Math.sqrt(2.0);
+
+      const t = 1.0 / (1.0 + p * absX);
+      const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-absX * absX);
+
+      return 0.5 * (1.0 + sign * y);
+    }
+
+    // Number formatter for VND
+    function formatCurrency(val) {
+      return Math.round(val).toLocaleString('vi-VN') + ' VNĐ';
+    }
+
+    function formatNumber(val, decimals = 2) {
+      return val.toLocaleString('vi-VN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    }
+
+    function calculateBSM() {
+      const errBox = document.getElementById('bsmError');
+      const errMsg = document.getElementById('bsmErrorMsg');
+
+      const S0 = parseFloat(document.getElementById('bsmS0').value);
+      const K = parseFloat(document.getElementById('bsmK').value);
+      const r = parseFloat(document.getElementById('bsmR').value) / 100;
+      const q = parseFloat(document.getElementById('bsmQ').value) / 100;
+      const sigma = parseFloat(document.getElementById('bsmSigma').value) / 100;
+      const T = parseFloat(document.getElementById('bsmT').value);
+      const multiplier = parseFloat(document.getElementById('bsmMultiplier').value) || 100000;
+
+      // Validation
+      if (isNaN(S0) || S0 <= 0 || isNaN(K) || K <= 0) {
+        showError('Giá cơ sở S₀ và Giá thực hiện K phải là số dương.');
+        return;
+      }
+      if (isNaN(sigma) || sigma <= 0) {
+        showError('Độ biến động σ phải lớn hơn 0.');
+        return;
+      }
+      if (isNaN(T) || T <= 0) {
+        showError('Thời gian đáo hạn T phải lớn hơn 0.');
+        return;
+      }
+
+      errBox.style.display = 'none';
+
+      // Calculations
+      const sqrtT = Math.sqrt(T);
+      const d1 = (Math.log(S0 / K) + (r - q + 0.5 * sigma * sigma) * T) / (sigma * sqrtT);
+      const d2 = d1 - sigma * sqrtT;
+
+      const Nd1 = normalCDF(d1);
+      const Nd2 = normalCDF(d2);
+      const N_neg_d1 = normalCDF(-d1);
+      const N_neg_d2 = normalCDF(-d2);
+
+      const exp_qT = Math.exp(-q * T);
+      const exp_rT = Math.exp(-r * T);
+
+      const callPrice = S0 * exp_qT * Nd1 - K * exp_rT * Nd2;
+      const putPrice = K * exp_rT * N_neg_d2 - S0 * exp_qT * N_neg_d1;
+
+      const deltaCall = exp_qT * Nd1;
+      const deltaPut = exp_qT * (Nd1 - 1.0);
+
+      // Render Intermediates
+      document.getElementById('outD1').innerText = d1.toFixed(4);
+      document.getElementById('outD2').innerText = d2.toFixed(4);
+      document.getElementById('outNd1').innerText = Nd1.toFixed(4);
+      document.getElementById('outNd2').innerText = Nd2.toFixed(4);
+
+      // Render Outputs
+      document.getElementById('outCallPoints').innerText = callPrice.toFixed(2);
+      document.getElementById('outCallCash').innerText = formatCurrency(callPrice * multiplier);
+      document.getElementById('outDeltaCall').innerText = (deltaCall >= 0 ? '+' : '') + deltaCall.toFixed(4);
+
+      document.getElementById('outPutPoints').innerText = putPrice.toFixed(2);
+      document.getElementById('outPutCash').innerText = formatCurrency(putPrice * multiplier);
+      document.getElementById('outDeltaPut').innerText = deltaPut.toFixed(4);
+
+      // Trigger dependent calculators
+      runSimulation();
+    }
+
+    function showError(msg) {
+      const errBox = document.getElementById('bsmError');
+      const errMsg = document.getElementById('bsmErrorMsg');
+      errMsg.innerText = msg;
+      errBox.style.display = 'block';
+    }
+
+    function renderPayoffChart() {
+      const pos = document.getElementById('payoffPosition').value;
+      const K = parseFloat(document.getElementById('payoffK').value) || 1860;
+      const premium = parseFloat(document.getElementById('payoffPremium').value) || 91.55;
+
+      const svg = document.getElementById('payoffSvg');
+      const beElem = document.getElementById('payoffBreakEven');
+      const formDesc = document.getElementById('payoffFormulaDesc');
+      const textDetail = document.getElementById('payoffTextDetail');
+
+      let breakEven = 0;
+      let text = '';
+
+      if (pos === 'long_call') {
+        breakEven = K + premium;
+        formDesc.innerText = 'S_hòavốn = K + C = ' + K + ' + ' + premium.toFixed(2);
+        text = '<strong>Long Call:</strong> Lỗ tối đa giới hạn ở mức phí đã nộp (' + premium.toFixed(2) + ' điểm) nếu S &le; K. Lãi tiềm năng không giới hạn khi chỉ số vượt qua điểm hòa vốn ' + breakEven.toFixed(2) + '.';
+      } else if (pos === 'short_call') {
+        breakEven = K + premium;
+        formDesc.innerText = 'S_hòavốn = K + C = ' + K + ' + ' + premium.toFixed(2);
+        text = '<strong>Short Call:</strong> Lãi tối đa bằng phí nhận được (' + premium.toFixed(2) + ' điểm) nếu S &le; K. Lỗ tiềm năng không giới hạn khi chỉ số vượt qua điểm hòa vốn ' + breakEven.toFixed(2) + '. <em>Bắt buộc ký quỹ chặt chẽ!</em>';
+      } else if (pos === 'long_put') {
+        breakEven = K - premium;
+        formDesc.innerText = 'S_hòavốn = K - P = ' + K + ' - ' + premium.toFixed(2);
+        text = '<strong>Long Put:</strong> Lỗ tối đa giới hạn ở mức phí (' + premium.toFixed(2) + ' điểm) nếu S &ge; K. Lãi tối đa đạt khi chỉ số rơi về 0.';
+      } else if (pos === 'short_put') {
+        breakEven = K - premium;
+        formDesc.innerText = 'S_hòavốn = K - P = ' + K + ' - ' + premium.toFixed(2);
+        text = '<strong>Short Put:</strong> Lãi tối đa bằng phí nhận được (' + premium.toFixed(2) + ' điểm) nếu S &ge; K. Rủi ro thua lỗ rất lớn nếu thị trường sụt giảm sâu dưới điểm hòa vốn ' + breakEven.toFixed(2) + '.';
+      }
+
+      beElem.innerText = breakEven.toFixed(2);
+      textDetail.innerHTML = text;
+
+      // Draw SVG Chart
+      const width = 540;
+      const height = 300;
+      const padL = 50, padR = 30, padT = 30, padB = 40;
+
+      const minS = K - 160;
+      const maxS = K + 160;
+      const maxPnL = 120;
+      const minPnL = -120;
+
+      const scaleX = (s) => padL + ((s - minS) / (maxS - minS)) * (width - padL - padR);
+      const scaleY = (p) => padT + ((maxPnL - p) / (maxPnL - minPnL)) * (height - padT - padB);
+
+      const yZero = scaleY(0);
+      const xK = scaleX(K);
+      const xBE = scaleX(breakEven);
+
+      // Calculate path points
+      const points = [];
+      const step = 5;
+      for (let s = minS; s <= maxS; s += step) {
+        let pnl = 0;
+        if (pos === 'long_call') pnl = Math.max(s - K, 0) - premium;
+        else if (pos === 'short_call') pnl = -Math.max(s - K, 0) + premium;
+        else if (pos === 'long_put') pnl = Math.max(K - s, 0) - premium;
+        else if (pos === 'short_put') pnl = -Math.max(K - s, 0) + premium;
+        points.push(`${scaleX(s).toFixed(1)},${scaleY(pnl).toFixed(1)}`);
+      }
+
+      const pathData = 'M ' + points.join(' L ');
+
+      // Color scheme
+      const strokeColor = (pos.includes('long')) ? '#009fda' : '#f43f5e';
+
+      svg.innerHTML = `
+        <!-- Grid lines -->
+        <line x1="${padL}" y1="${yZero}" x2="${width - padR}" y2="${yZero}" stroke="#334155" stroke-width="1.5" />
+        <line x1="${xK}" y1="${padT}" x2="${xK}" y2="${height - padB}" stroke="#1e293b" stroke-dasharray="4" />
+        <line x1="${xBE}" y1="${padT}" x2="${xBE}" y2="${height - padB}" stroke="#334155" stroke-dasharray="3" />
+        
+        <!-- Axis labels -->
+        <text x="${width - padR}" y="${yZero - 8}" fill="#94a3b8" font-size="11" text-anchor="end">Trục Giá Chỉ Số (S)</text>
+        <text x="${padL}" y="${padT - 10}" fill="#94a3b8" font-size="11">PnL (Điểm)</text>
+        
+        <!-- Strike & Break-even points markers -->
+        <text x="${xK}" y="${height - padB + 16}" fill="#94a3b8" font-size="10" text-anchor="middle">K (${K})</text>
+        <circle cx="${xBE}" cy="${yZero}" r="4" fill="#c9dd03" />
+        <text x="${xBE}" y="${yZero + 18}" fill="#c9dd03" font-size="10" font-weight="700" text-anchor="middle">Hòa Vốn (${breakEven.toFixed(1)})</text>
+        
+        <!-- Payoff line -->
+        <path d="${pathData}" fill="none" stroke="${strokeColor}" stroke-width="3" stroke-linecap="round" />
+      `;
+    }
+
+    function calculateHedging() {
+      const type = document.getElementById('hedgeOptionType').value;
+      const qty = parseInt(document.getElementById('hedgeQuantity').value) || 10;
+      const delta = parseFloat(document.getElementById('hedgeDeltaInput').value) || 0.60;
+
+      let posMultiplier = 1; // Long
+      if (type.includes('short')) posMultiplier = -1;
+
+      // For Put, delta is negative
+      let effectiveDelta = delta;
+      if (type.includes('put') && effectiveDelta > 0) effectiveDelta = -effectiveDelta;
+
+      const portfolioDelta = qty * posMultiplier * effectiveDelta;
+      const hedgeAction = -portfolioDelta;
+
+      const pfDeltaElem = document.getElementById('outHedgePortfolioDelta');
+      pfDeltaElem.innerText = (portfolioDelta >= 0 ? '+' : '') + portfolioDelta.toFixed(2);
+      pfDeltaElem.style.color = portfolioDelta < 0 ? 'var(--color-danger)' : 'var(--color-success)';
+
+      const actionElem = document.getElementById('outHedgeAction');
+      const roundedHedge = Math.round(hedgeAction);
+      if (roundedHedge > 0) {
+        actionElem.innerText = `MUA (LONG) ${Math.abs(roundedHedge)} HĐTL`;
+        actionElem.style.color = 'var(--color-success)';
+      } else if (roundedHedge < 0) {
+        actionElem.innerText = `BÁN (SHORT) ${Math.abs(roundedHedge)} HĐTL`;
+        actionElem.style.color = 'var(--color-danger)';
+      } else {
+        actionElem.innerText = 'ĐÃ TRUNG HÒA (0 HĐTL)';
+        actionElem.style.color = 'var(--color-cyan)';
+      }
+    }
+
+    function syncDeltaFromBSM() {
+      const bsmDelta = parseFloat(document.getElementById('outDeltaCall').innerText);
+      if (!isNaN(bsmDelta)) {
+        document.getElementById('hedgeDeltaInput').value = Math.abs(bsmDelta).toFixed(2);
+        calculateHedging();
+      }
+    }
+
+    function runSimulation() {
+      const S0 = parseFloat(document.getElementById('bsmS0').value) || 1860;
+      const K = parseFloat(document.getElementById('bsmK').value) || 1860;
+      const r = parseFloat(document.getElementById('bsmR').value) / 100 || 0.079;
+      const q = parseFloat(document.getElementById('bsmQ').value) / 100 || 0;
+      const sigma = parseFloat(document.getElementById('bsmSigma').value) / 100 || 0.1958;
+      const T = parseFloat(document.getElementById('bsmT').value) || 0.25;
+      const multiplier = parseFloat(document.getElementById('bsmMultiplier').value) || 100000;
+
+      const numContracts = parseInt(document.getElementById('simContracts').value) || 10;
+      const collateral = parseFloat(document.getElementById('simCollateral').value) || 300000000;
+      const imRate = (parseFloat(document.getElementById('simFuturesMarginRate').value) || 17) / 100;
+      const step = parseFloat(document.getElementById('simStep').value) || 60;
+      const enableNetting = document.getElementById('toggleNetting').checked;
+
+      // 3 scenarios
+      const scenarios = [
+        { name: 'Down', S: S0 - step },
+        { name: 'Base', S: S0 },
+        { name: 'Up', S: S0 + step }
+      ];
+
+      document.getElementById('headerDown').innerText = `VN30 = ${scenarios[0].S}`;
+      document.getElementById('headerBase').innerText = `VN30 = ${scenarios[1].S}`;
+      document.getElementById('headerUp').innerText = `VN30 = ${scenarios[2].S}`;
+
+      scenarios.forEach(sc => {
+        // Re-price Call Option with BSM
+        const sqrtT = Math.sqrt(T);
+        const d1 = (Math.log(sc.S / K) + (r - q + 0.5 * sigma * sigma) * T) / (sigma * sqrtT);
+        const d2 = d1 - sigma * sqrtT;
+        const Nd1 = normalCDF(d1);
+        const Nd2 = normalCDF(d2);
+        const callPts = sc.S * Math.exp(-q * T) * Nd1 - K * Math.exp(-r * T) * Nd2;
+        const delta = Math.exp(-q * T) * Nd1;
+
+        // Margins for Short Call:
+        // Value Margin = Call Price * Multiplier * NumContracts
+        const VM = callPts * multiplier * numContracts;
+
+        // Risk Margin (Delta model) = (NumContracts * Delta) * (S * Multiplier * IM_rate)
+        const RM = (numContracts * delta) * (sc.S * multiplier * imRate);
+
+        let totalRequired = VM + RM;
+
+        // PnL from initial 6 Long Futures (Initial hedge at S0 = 1860)
+        const initialHedgeQty = 6;
+        const futuresPnL = initialHedgeQty * (sc.S - S0) * multiplier;
+
+        let effectiveCollateral = collateral;
+        if (enableNetting) {
+          effectiveCollateral += futuresPnL;
+        }
+
+        const surplus = effectiveCollateral - totalRequired;
+
+        // Populate table
+        document.getElementById(`scS${sc.name}`).innerText = sc.S.toLocaleString('vi-VN');
+        document.getElementById(`scDelta${sc.name}`).innerText = delta.toFixed(2);
+        document.getElementById(`scCallPts${sc.name}`).innerText = callPts.toFixed(2);
+        document.getElementById(`scVM${sc.name}`).innerText = formatCurrency(VM);
+        document.getElementById(`scRM${sc.name}`).innerText = formatCurrency(RM);
+        document.getElementById(`scTotal${sc.name}`).innerText = formatCurrency(totalRequired);
+        document.getElementById(`scCollateral${sc.name}`).innerText = formatCurrency(effectiveCollateral);
+
+        const statusElem = document.getElementById(`scStatus${sc.name}`);
+        const actionElem = document.getElementById(`scAction${sc.name}`);
+
+        if (surplus >= 0) {
+          statusElem.innerText = `+${formatCurrency(surplus)} (Dư)`;
+          statusElem.style.color = '#34d399';
+          if (sc.name === 'Down') {
+            actionElem.className = 'tag tag-verified';
+            actionElem.innerText = 'Margin Release (Rút bớt)';
+          } else {
+            actionElem.className = 'tag tag-verified';
+            actionElem.innerText = 'Vị Thế An Toàn';
+          }
+        } else {
+          statusElem.innerText = `-${formatCurrency(Math.abs(surplus))} (THIẾU)`;
+          statusElem.style.color = 'var(--color-danger)';
+          actionElem.className = 'tag tag-draft';
+          actionElem.innerText = 'MARGIN CALL (Nộp thêm)';
+        }
+
+        // Hedging action
+        const reqHedge = Math.round(numContracts * delta);
+        const hedgeDiff = reqHedge - initialHedgeQty;
+        const hedgeElem = document.getElementById(`scHedge${sc.name}`);
+        if (hedgeDiff > 0) {
+          hedgeElem.innerText = `Mua thêm ${hedgeDiff} HĐTL Long`;
+        } else if (hedgeDiff < 0) {
+          hedgeElem.innerText = `Bán bớt ${Math.abs(hedgeDiff)} HĐTL Long`;
+        } else {
+          hedgeElem.innerText = `Duy trì Long ${initialHedgeQty} HĐTL`;
+        }
+      });
+    }
+
+    function checkQuiz(btn, isCorrect, explanation) {
+      const parent = btn.parentElement;
+      const options = parent.querySelectorAll('.quiz-option');
+      const feedback = parent.querySelector('.quiz-feedback');
+
+      options.forEach(opt => {
+        opt.classList.remove('correct', 'wrong');
+        opt.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.color = '#34d399';
+        feedback.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+      } else {
+        btn.classList.add('wrong');
+        feedback.style.background = 'rgba(244, 63, 94, 0.15)';
+        feedback.style.color = '#fb7185';
+        feedback.style.border = '1px solid rgba(244, 63, 94, 0.3)';
+      }
+
+      feedback.innerHTML = explanation;
+      feedback.style.display = 'block';
+    }
+
+    function resetAllDefaults() {
+      document.getElementById('bsmS0').value = 1860;
+      document.getElementById('bsmK').value = 1860;
+      document.getElementById('bsmR').value = 7.9;
+      document.getElementById('bsmQ').value = 0.0;
+      document.getElementById('bsmSigma').value = 19.58;
+      document.getElementById('bsmT').value = 0.25;
+      document.getElementById('bsmMultiplier').value = 100000;
+
+      document.getElementById('payoffK').value = 1860;
+      document.getElementById('payoffPremium').value = 91.55;
+      document.getElementById('payoffPosition').value = 'long_call';
+
+      document.getElementById('hedgeOptionType').value = 'short_call';
+      document.getElementById('hedgeQuantity').value = 10;
+      document.getElementById('hedgeDeltaInput').value = 0.60;
+
+      document.getElementById('simContracts').value = 10;
+      document.getElementById('simCollateral').value = 300000000;
+      document.getElementById('simFuturesMarginRate').value = 17;
+      document.getElementById('simStep').value = 60;
+      document.getElementById('toggleNetting').checked = false;
+
+      calculateBSM();
+      renderPayoffChart();
+      calculateHedging();
+      runSimulation();
+    }
+
+    // Reading progress tracker & smooth scroll
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById('readingProgress').style.width = scrolled + '%';
+
+      // Highlight active nav
+      const sections = document.querySelectorAll('section');
+      const navLinks = document.querySelectorAll('#mainNav a');
+      let current = '';
+
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 120;
+        if (pageYOffset >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Window load initialization
+    window.onload = function() {
+      calculateBSM();
+      renderPayoffChart();
+      calculateHedging();
+      runSimulation();
+    };
+  </script>
+</body>
+</html>
